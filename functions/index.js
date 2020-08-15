@@ -1,8 +1,7 @@
 const functions = require('firebase-functions');
 const admin = require('firebase-admin');
-// initialize app
 admin.initializeApp();
-// send push notification
+
 
 exports.sendStatusMessage = functions.firestore.document('buildings/{bId}/gateways/{gId}/things/{tId}').onWrite(async (change, context) => {
 
@@ -56,4 +55,3 @@ functions.logger.log('bname', Bname)
 
 
 });
-
