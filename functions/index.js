@@ -11,25 +11,28 @@ exports.sendStatusMessage = functions.firestore.document('buildings/{bId}/gatewa
     functions.logger.log('message', data);
     functions.logger.log('bid', bId);
     const users = admin.firestore().collection('users');
-    admin.firestore()
+
+       let bname = await admin.firestore()
         .collection('buildings').doc(String(bId))
         .get()
-        .then(function(doc){
+        .then((doc) => {
+
 
                 functions.logger.log(doc.data());
 
-             Bname = doc.data().bname;
-            return Bname;
+
+
+            return doc.data().bname;
         })
         .catch(err => {
         functions.logger.log('에러', err);
     });
-functions.logger.log('bname', Bname)
+    functions.logger.log('건물이름', bname);
 
     const payload = {
         notification: {
             'title': '화재발생',
-            'body': ''
+            'body': String(bname)
         }
 
     };
@@ -39,12 +42,10 @@ functions.logger.log('bname', Bname)
         .then(snapshot => {
             snapshot.forEach(doc => {
                 functions.logger.log('doc.id', doc.id);
-
-
                     const pushToken = doc.data().token;
                     functions.logger.log('토큰값, 보내는 메세지', pushToken, payload);
 
-                     //admin.messaging().sendToDevice(pushToken, payload);
+                     admin.messaging().sendToDevice(pushToken, payload);
 
             });
             return '모든 유저에게 보내는 메세지 입니다.';
